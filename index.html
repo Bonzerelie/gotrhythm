@@ -1,0 +1,161 @@
+<!-- =========================
+     /index.html
+     ========================= -->
+     <!doctype html>
+     <html lang="en">
+     <head>
+       <meta charset="utf-8" />
+       <meta name="viewport" content="width=device-width, initial-scale=1" />
+       <title>Got Rhythm</title>
+       <link rel="stylesheet" href="style.css" />
+     </head>
+     <body>
+       <div class="app">
+         <header class="hero">
+           <h1 class="app-title">Got Rhythm 🥁</h1>
+           <p class="app-subtitle-large">Listen • Repeat • Improve</p>
+           <p class="app-subtitle">
+             The game plays a 4-beat rhythm, then you repeat it using <strong>Kick</strong> (⬅️) and <strong>Snare</strong> (➡️).<br/>
+             Each round is: <strong>Listen (4)</strong> → <strong>Get ready (4)</strong> → <strong>You play (4)</strong> → <strong>Score (4)</strong>.
+           </p>
+         </header>
+     
+         <section class="controlsPanel controlsPanelActions" aria-label="game controls">
+           <div class="actionsRow actionsCentered wrapTight">
+             <button id="beginBtn" type="button" class="primary pulse">Begin Game</button>
+             <button id="pauseBtn" type="button" disabled>Pause</button>
+             <button id="stopBtn" type="button" disabled>Stop / Reset</button>
+     
+             <div class="inlineControl inlineControlRow">
+               <div class="inlineLabel">Difficulty</div>
+               <select id="difficultySel" class="compactSelect">
+                 <option value="simple">Simple</option>
+                 <option value="medium">Medium</option>
+                 <option value="difficult">Difficult</option>
+                 <option value="complex">Complex</option>
+               </select>
+             </div>
+     
+             <div class="inlineControl inlineControlRow">
+               <div class="inlineLabel">Metronome (BPM)</div>
+               <div class="bpmRow">
+                 <input id="bpmRange" type="range" min="40" max="140" value="70" />
+                 <input id="bpmNum" type="number" min="40" max="140" value="70" />
+               </div>
+             </div>
+     
+             <button id="downloadScoreBtn" type="button">Download Scorecard</button>
+             <button id="infoBtn" type="button">Information</button>
+           </div>
+         </section>
+     
+         <section class="statusPanel" aria-label="status">
+           <div class="statusRow">
+             <div class="beatLights" aria-label="beat indicator">
+               <div class="beatDot" id="beatDot1"></div>
+               <div class="beatDot" id="beatDot2"></div>
+               <div class="beatDot" id="beatDot3"></div>
+               <div class="beatDot" id="beatDot4"></div>
+             </div>
+     
+             <div class="statusText">
+               <div class="phaseTitle" id="phaseTitle">Ready</div>
+               <div class="phaseSub" id="phaseSub">Press <strong>Begin Game</strong> to start.</div>
+             </div>
+           </div>
+     
+           <div class="scoreInline">
+             <div class="scorePill">
+               <span class="scoreLabel">Average</span>
+               <span class="scoreValue" id="avgScoreOut">—</span>
+             </div>
+             <div class="scorePill">
+               <span class="scoreLabel">Last</span>
+               <span class="scoreValue" id="lastScoreOut">—</span>
+             </div>
+             <div class="scorePill">
+               <span class="scoreLabel">Rounds</span>
+               <span class="scoreValue" id="roundsOut">0</span>
+             </div>
+             <div class="scorePill">
+               <span class="scoreLabel">Avg ms accuracy</span>
+               <span class="scoreValue" id="avgMsOut">—</span>
+             </div>
+           </div>
+         </section>
+     
+         <section class="padsPanel" aria-label="drum pads">
+           <div class="padsRow">
+             <button id="kickBtn" type="button" class="padBtn kickPad" disabled>
+               <img src="images/kick.png" alt="" class="padIcon" />
+               <span class="padText">Kick</span>
+               <span class="padKey">⬅️</span>
+             </button>
+     
+             <button id="snareBtn" type="button" class="padBtn snarePad" disabled>
+               <img src="images/snare.png" alt="" class="padIcon" />
+               <span class="padText">Snare</span>
+               <span class="padKey">➡️</span>
+             </button>
+           </div>
+         </section>
+     
+         <section class="analysis" aria-label="feedback">
+           <div class="analysisGrid">
+             <div class="analysisCard fixedFeedbackCard" id="feedbackCard">
+               <div class="analysisLabel">Feedback</div>
+               <div class="analysisBody" id="feedbackOut" aria-live="polite">
+                 Press <strong>Begin Game</strong> to start.
+               </div>
+     
+               <!-- kept in DOM for compatibility, but visually hidden in CSS -->
+               <div class="scoreBarWrap" aria-hidden="true">
+                 <div class="scoreBar" id="scoreBar"></div>
+               </div>
+             </div>
+           </div>
+         </section>
+     
+         <footer class="endnotes"></footer>
+       </div>
+     
+       <!-- Info modal -->
+       <div id="infoModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="infoTitle">
+         <div class="modalCard" role="document">
+           <div class="modalHeader">
+             <h2 id="infoTitle">More information 🧐</h2>
+           </div>
+           <div class="modalBody">
+             <p>
+               Each round is a single 4/4 bar. Watch the 4 green circles for the beat.<br/>
+               <strong>Simple</strong>: quarter/half-note rhythms<br/>
+               <strong>Medium</strong>: includes 8ths<br/>
+               <strong>Difficult</strong>: includes 16ths<br/>
+               <strong>Complex</strong>: includes swung 8ths
+             </p>
+             <p>
+               Tip: Try to lock your hits to the beat lights. Use ⬅️ for kick and ➡️ for snare.
+             </p>
+           </div>
+           <div class="modalFooter">
+             <button id="infoOk" type="button" class="primary">Got it</button>
+           </div>
+         </div>
+       </div>
+     
+       <!-- Stop/summary modal -->
+       <div class="modal hidden" id="summaryModal" role="dialog" aria-modal="true" aria-labelledby="summaryTitle">
+         <div class="modalCard">
+           <div class="modalTitle" id="summaryTitle">Score Summary</div>
+           <div class="modalBody" id="summaryBody">—</div>
+           <div class="modalActions">
+             <button id="summaryDownload" type="button">Download Score PNG</button>
+             <button id="summaryClose" type="button" class="primary">Close</button>
+           </div>
+         </div>
+       </div>
+     
+       <script src="script.js"></script>
+     </body>
+     </html>
+     
